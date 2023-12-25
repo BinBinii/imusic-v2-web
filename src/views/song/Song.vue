@@ -1,12 +1,12 @@
 <template>
   <div class="song-item" v-if="chooseSongStore.getSongList.length > 0" v-for="song in chooseSongStore.getSongList">
-    <div class="pic"></div>
-    <!-- <img class="pic" :src="song['song']['al']['picUrl']" /> -->
+    <img class="pic" :src="song['song']['al']['picUrl']" />
     <div class="info">
       <p class="name">{{ song['song']['name'] }}</p>
-      <p class="artist">{{ singerSummary(song['song']['artists']) }}</p>
+      <p class="artist">{{ singerSummary(song['song']['ar']) }}</p>
     </div>
   </div>
+  <div v-else class="empty">暂无可播放音乐...</div>
 </template>
 <script setup lang="ts">
 import { onMounted } from 'vue';
@@ -60,5 +60,10 @@ const singerSummary = (singers: any[]): string => {
       color: var(--theme-desc);
     }
   }
+}
+.empty {
+  font-size: 0.4rem;
+  color: var(--theme-desc);
+  text-align: center;
 }
 </style>

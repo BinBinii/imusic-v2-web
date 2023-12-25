@@ -1,14 +1,12 @@
 <template>
   <div class="home">
     <div class="song-box">
-      <div style="font-size: 13px;" @click="autoLogin">自动注册（测试）</div>
       <RouterView />
     </div>
-
     <div class="play-box" v-if="currentSongInfo['id'] && currentSongInfo['id'] !== null && currentSongInfo['id'] !== ''">
       <img class="pic" :src="currentSongInfo['al']['picUrl']" />
       <div class="info">{{ currentSongInfo['name'] }}</div>
-      <n-icon size="35" class="icon" @click="nextSong">
+      <n-icon class="icon" @click="nextSong">
         <PlayForward />
       </n-icon>
     </div>
@@ -32,7 +30,7 @@
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { NIcon } from 'naive-ui'
 import { CaretForwardCircle, Search, PlayForward } from '@vicons/ionicons5'
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useUserStore } from '../../store/modules/user'
 import { useChooseSongStore } from '../../store/modules/chooseSong';
 import { useSocketStore } from '../../store/modules/webSocket'
@@ -42,6 +40,7 @@ import { nextSong as nextSongApi } from '../../api/song'
 
 // 路由
 const router = useRouter()
+const route = useRoute()
 
 // store
 const userStore = useUserStore()
@@ -54,10 +53,14 @@ const currentSongInfo = ref({} as any)
 const navIndex = ref(0)
 
 onMounted(() => {
+  let key = route.query.key
   router.push('/home/song')
-  setTimeout(() => {
+  if (userStore.getToken && userStore.getToken !== '' && userStore.getToken !== null) {
     initWebsocket()
-  }, 1000)
+  }
+  if (key === 'binbini0626') {
+    autoLogin()
+  }
 })
 
 chooseSongStore.$subscribe((mutation, state) => {
@@ -96,6 +99,7 @@ const autoLogin = (): void => {
         password: params['password']
       }).then(loginRes => {
         console.log(loginRes)
+        initWebsocket()
       })
     }
   })
@@ -206,6 +210,7 @@ const sendMsg = (user: string, msg: string): void => {
   .icon {
     float: right;
     margin: 12px;
+    font-size: 0.9rem
   }
 }
 
@@ -220,7 +225,7 @@ const sendMsg = (user: string, msg: string): void => {
 
   .nav-item {
     position: relative;
-    top: 48%;
+    top: 52%;
     width: 50%;
     height: 100%;
     text-align: center;

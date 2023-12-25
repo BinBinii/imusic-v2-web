@@ -1,7 +1,7 @@
 import request from '../utils/iMusicRequest'
 
 // 添加歌曲
-export function addSong(data) {
+export function addSong(data: any) {
   return request({
     url: '/song/add',
     method: 'post',
