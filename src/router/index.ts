@@ -1,9 +1,8 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import homeRouter from './home'
 
 const router = createRouter({
-  //  hash 模式。
-  history: createWebHashHistory(),
+  history: createWebHistory('/web/'),
   routes: [
     homeRouter,
     // 设置首页

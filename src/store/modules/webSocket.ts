@@ -25,24 +25,43 @@ export const useSocketStore = defineStore({
             getChooseSong().then(res => {
               chooseSongStore.syncSong(res.data.result)
               setTimeout(() => {
-                chooseSongStore.setIsPlaySong(res.data.result[0])
+                const songList = chooseSongStore.getSongList
+                if (songList.length == 1) {
+                  chooseSongStore.setIsPlaySong(songList[0])
+                  chooseSongStore.release()
+                }
               }, 300)
             })
             break;
           case "001":
             if (msg.data === 'updateSong') {
               getChooseSong().then(res => {
+                chooseSongStore.lock()
                 chooseSongStore.syncSong(res.data.result)
-                if (res.data.result.length == 1) {
-                  chooseSongStore.setIsPlaySong(res.data.result[0])
-                }
+                setTimeout(() => {
+                  const songList = chooseSongStore.getSongList
+                  if (songList.length == 1) {
+                    chooseSongStore.setIsPlaySong(songList[0])
+                    chooseSongStore.release()
+                  }
+                }, 300)
               })
             }
             if (msg.data === 'nextSong') {
               getChooseSong().then(res => {
+                chooseSongStore.lock()
                 chooseSongStore.syncSong(res.data.result)
                 setTimeout(() => {
-                  chooseSongStore.setIsPlaySong(res.data.result[0])
+                  const songList = chooseSongStore.getSongList
+                  if (songList.length > 0) {
+                    chooseSongStore.setIsPlaySong(songList[0])
+                  } else {
+                    chooseSongStore.setIsPlaySong({
+                      song: null,
+                      from: ''
+                    })
+                  }
+                  chooseSongStore.release()
                 }, 300)
               })
             }

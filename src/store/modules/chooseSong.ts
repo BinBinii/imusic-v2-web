@@ -8,12 +8,14 @@ export type ChooseSong = {
 export type ChooseSongState = {
   songList: ChooseSong[],
   isPlaySong: ChooseSong,
+  songLock: boolean,
 }
 
 export const useChooseSongStore = defineStore('home', {
   state: (): ChooseSongState => ({
     songList: [] as ChooseSong[],
     isPlaySong: {} as ChooseSong,
+    songLock: false,
   }),
   getters: {
     getSongList(): ChooseSong[] {
@@ -21,6 +23,9 @@ export const useChooseSongStore = defineStore('home', {
     },
     getIsPlaySong(): ChooseSong {
       return this.isPlaySong;
+    },
+    getSongLock(): boolean {
+      return this.songLock;
     }
   },
   actions: {
@@ -32,6 +37,12 @@ export const useChooseSongStore = defineStore('home', {
     },
     setIsPlaySong(playSong: ChooseSong) {
       this.isPlaySong = playSong
+    },
+    lock() {
+      this.songLock = true
+    },
+    release() {
+      this.songLock = false
     }
   },
 })

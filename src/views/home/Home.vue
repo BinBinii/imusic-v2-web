@@ -52,10 +52,16 @@ const currentSongInfo = ref({} as any)
 
 const navIndex = ref(0)
 
+const userInfo = ref({} as any)
+
 onMounted(() => {
   let key = route.query.key
-  router.push('/home/song')
   if (userStore.getToken && userStore.getToken !== '' && userStore.getToken !== null) {
+    userStore.getInfo().then(res => {
+      userInfo.value = res
+    }).catch(err => {
+      console.log(err)
+    })
     initWebsocket()
   }
   if (key === 'binbini0626') {
@@ -63,9 +69,9 @@ onMounted(() => {
   }
 })
 
-chooseSongStore.$subscribe((mutation, state) => {
-  if (mutation.events['key'] === 'isPlaySong') {
-    let song = mutation.events['newValue']['song']
+chooseSongStore.$subscribe((_, state: any) => {
+  if (chooseSongStore.songLock === false) {
+    let song = state.isPlaySong.song
     getSongDetailApi({
       ids: song['id']
     }).then(res => {
@@ -85,7 +91,8 @@ onBeforeUnmount(() => {
  * 连接Netty服务器
  */
 const initWebsocket = (): void => {
-  let url = 'ws://127.0.0.1:8000/netty.io?data=' + userStore.getToken
+  // let url = 'ws://127.0.0.1:8000/netty.io?data=' + userStore.getToken
+  let url = 'ws://8.134.51.235/wss/netty.io?data=' + userStore.getToken
   socketStore.connect(url)
 }
 
@@ -99,6 +106,11 @@ const autoLogin = (): void => {
         password: params['password']
       }).then(loginRes => {
         console.log(loginRes)
+        userStore.getInfo().then(res => {
+          userInfo.value = res
+        }).catch(err => {
+          console.log(err)
+        })
         initWebsocket()
       })
     }
