@@ -7,7 +7,8 @@ const chooseSongStore = useChooseSongStore()
 export const useSocketStore = defineStore({
   id: 'websocket',
   state: () => ({
-    socket: null as WebSocket | null
+    socket: null as WebSocket | null,
+    limitConnect: 3
   }),
   actions: {
     connect(url: string): void {
@@ -76,6 +77,17 @@ export const useSocketStore = defineStore({
     sendMessage(message: string): void {
       if (this.socket && this.socket.readyState === WebSocket.OPEN) {
         this.socket.send(message)
+      }
+    },
+    reconnect(url: string) {
+      if (this.limitConnect > 0) {
+        this.limitConnect--
+        // 重连
+        setTimeout(() => {
+          this.connect(url)
+        }, 2000)
+      } else {
+        console.log("TCP连接已超时")
       }
     },
     disconnect(): void {
